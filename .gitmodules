@@ -1,0 +1,3 @@
+[submodule "Assets/RoomAcoustiCpp-Unity"]
+	path = Assets/RoomAcoustiCpp-Unity
+	url = https://github.com/jmannall/RoomAcoustiCpp-Unity

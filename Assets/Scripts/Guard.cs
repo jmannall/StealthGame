@@ -16,7 +16,8 @@ public class Guard : MonoBehaviour
 
     public float sightDistance = 5.0f;
 
-    private AudioSource audioSource;
+    private RACAudioSource audioSource;
+    private AudioSource audioSourceComponent;
     public AudioClip spottedSound;
     public AudioClip patrolSound;
     public AudioClip chaseSound;
@@ -27,8 +28,8 @@ public class Guard : MonoBehaviour
     void Start()
     {
         agent = GetComponent<NavMeshAgent>();
-        audioSource = GetComponent<AudioSource>();
-        audioSource.loop = true;
+        audioSource = GetComponent<RACAudioSource>();
+        audioSourceComponent = GetComponent<AudioSource>();
         PlaySyncedAudio(patrolSound);
         agent.destination = path.GetNextWaypoint();
 
@@ -62,14 +63,15 @@ public class Guard : MonoBehaviour
 
     void PlaySyncedAudio(AudioClip clip)
     {
-        audioSource.clip = clip;
 
-        double loopLength = audioSource.clip.samples / (double)audioSource.clip.frequency;
+        double loopLength = clip.samples / (double)clip.frequency;
         double loopFraction = (AudioSettings.dspTime / loopLength) % 1.0;
 
-        int newSample = Mathf.FloorToInt((float)(loopFraction * audioSource.clip.samples));
-        audioSource.timeSamples = newSample;
-        audioSource.Play();
+        int newSample = Mathf.FloorToInt((float)(loopFraction * clip.samples));
+        audioSourceComponent.timeSamples = newSample;
+        audioSource.SetClip(clip);
+
+        //audioSource.Play();
     }
     void StartChase()
     {
