@@ -9,6 +9,7 @@ public class Guard : MonoBehaviour
 
     private Transform player;
     private bool isChasingPlayer = false;
+    static bool playerCaught = false;
 
     public float speed = 2.0f;
     [Min(0.0f)]
@@ -39,6 +40,13 @@ public class Guard : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (playerCaught)
+        {
+            audioSource.UpdateGain(-80.0f); // Mute the audio
+            agent.speed = 0.0f; // Stop the guard
+            return;
+        }
+
         agent.speed = speed;
         SetNavigationTarget();
     }
@@ -59,6 +67,11 @@ public class Guard : MonoBehaviour
 
         if (agent.remainingDistance <= distanceThreshold)
             agent.destination = path.GetNextWaypoint();
+    }
+
+    public static void OnPlayerCaught()
+    {
+        playerCaught = true;
     }
 
     void PlaySyncedAudio(AudioClip clip)
