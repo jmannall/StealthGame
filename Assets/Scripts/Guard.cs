@@ -42,7 +42,7 @@ public class Guard : MonoBehaviour
     {
         if (playerCaught)
         {
-            audioSource.UpdateGain(-80.0f); // Mute the audio
+            audioSource.volume = 0.0f; // Mute the audio
             agent.speed = 0.0f; // Stop the guard
             return;
         }
