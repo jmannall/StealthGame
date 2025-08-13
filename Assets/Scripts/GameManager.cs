@@ -34,12 +34,5 @@ public class GameManager : MonoBehaviour
         score.text = "You survived: " + (AudioSettings.dspTime - startTime).ToString("F2") + " seconds";
         gameOverPanel.SetActive(true);
         Debug.Log("Player caught!");
-        // wait for the sound to finish before pausing the game
-        Invoke("MuteAudio", gameOverSound.length);
-    }
-
-    private void MuteAudio()
-    {
-        AudioListener.pause = true;
     }
 }

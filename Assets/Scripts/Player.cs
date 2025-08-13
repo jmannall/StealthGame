@@ -4,7 +4,19 @@ using UnityEngine.InputSystem;
 public class Player : MonoBehaviour
 {
     public float speed = 0.5f;
-    public float rotationSpeed = 20.0f;
+    [Range(0, 1)]
+    public float mouseSensitivity = 1;
+    public Vector2 pitchMinMax = new Vector2(-40, 85);
+    
+    private float rotationSpeed = 0.12f;
+    private float gravity = 9.8f;
+
+    private Vector3 rotationSmoothVelocity;
+    private Vector3 currentRotation;
+
+    private float yaw = 0.0f;
+    private float pitch = 0.0f;
+
     private CharacterController characterController;
 
     private GameManager gameManager;
@@ -32,23 +44,30 @@ public class Player : MonoBehaviour
 
         Vector2 lookValue = lookAction.ReadValue<Vector2>();
 
-        Vector2 moveValue = moveAction.ReadValue<Vector2>();
-        Vector3 moveDirection = transform.forward * moveValue.y + transform.right * moveValue.x;
+        yaw += lookValue.x * mouseSensitivity;
+        pitch -= lookValue.y * mouseSensitivity;
+        pitch = Mathf.Clamp(pitch, pitchMinMax.x, pitchMinMax.y);
+        
+        currentRotation = Vector3.SmoothDamp(currentRotation, new Vector3(pitch, yaw), ref rotationSmoothVelocity, rotationSpeed);
+        Camera.main.transform.eulerAngles = currentRotation;
 
-        if (jumpAction.IsPressed())
-            moveDirection.y += 5.0f;
+        Vector2 moveValue = moveAction.ReadValue<Vector2>().normalized;
+        Vector3 moveDirection = Camera.main.transform.forward * moveValue.y + Camera.main.transform.right * moveValue.x;
+        moveDirection.y = 0.0f;
+        moveDirection = moveDirection.normalized;
 
-        Camera.main.transform.Rotate(Vector3.right, -lookValue.y * rotationSpeed * Time.deltaTime);
-        transform.Rotate(Vector3.up, lookValue.x * rotationSpeed * Time.deltaTime);
+        if (!characterController.isGrounded)
+            moveDirection.y -= gravity * Time.deltaTime;
         characterController.Move(moveDirection * Time.deltaTime * speed);
     }
 
     private void OnTriggerEnter(Collider collision)
     {
-        if (playerCaught)
-            return;
         if (collision.gameObject.layer == 6)
         {
+            if (playerCaught)
+                return;
+            Guard.OnPlayerCaught();
             playerCaught = true;
             gameManager.OnGameOver();
         }

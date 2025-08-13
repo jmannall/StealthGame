@@ -2875,7 +2875,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2784791988238888758, guid: e4ef0868dc818584d91850901e1a9c8c, type: 3}
       propertyPath: rotationSpeed
-      value: 30
+      value: 0.12
       objectReference: {fileID: 0}
     - target: {fileID: 2968781650948232660, guid: e4ef0868dc818584d91850901e1a9c8c, type: 3}
       propertyPath: near clip plane
