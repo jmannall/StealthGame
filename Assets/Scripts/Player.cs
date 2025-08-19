@@ -21,7 +21,6 @@ public class Player : MonoBehaviour
 
     private GameManager gameManager;
     InputAction moveAction, lookAction;
-    InputAction jumpAction;
 
     private bool playerCaught = false;
 
@@ -33,7 +32,6 @@ public class Player : MonoBehaviour
 
         moveAction = InputSystem.actions.FindAction("Move");
         lookAction = InputSystem.actions.FindAction("Look");
-        jumpAction = InputSystem.actions.FindAction("Jump");
     }
 
     // Update is called once per frame
@@ -54,11 +52,11 @@ public class Player : MonoBehaviour
         Vector2 moveValue = moveAction.ReadValue<Vector2>().normalized;
         Vector3 moveDirection = Camera.main.transform.forward * moveValue.y + Camera.main.transform.right * moveValue.x;
         moveDirection.y = 0.0f;
-        moveDirection = moveDirection.normalized;
+        moveDirection = moveDirection.normalized * speed;
 
         if (!characterController.isGrounded)
-            moveDirection.y -= gravity * Time.deltaTime;
-        characterController.Move(moveDirection * Time.deltaTime * speed);
+            moveDirection.y -= gravity;
+        characterController.Move(moveDirection * Time.deltaTime);
     }
 
     private void OnTriggerEnter(Collider collision)
